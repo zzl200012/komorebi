@@ -14,7 +14,7 @@ import (
 /* constructor for WildcardEntry, it's actually a composite entry, so we just remove the '*' at the end, then
 call the 'Walk' to traverse baseDir and build the zip entries. During the 'WalkFn', children dir will be skipped */
 func NewWildcardEntry(path string) CompositeEntry {
-	baseDir := path[:len(path) - 1]
+	baseDir := path[:len(path)-1]
 	compositeEntry := make([]Entry, 0)
 	walkFn := func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -35,4 +35,3 @@ func NewWildcardEntry(path string) CompositeEntry {
 	}
 	return compositeEntry
 }
-

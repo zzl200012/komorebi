@@ -20,10 +20,12 @@ func (dirEntry *DirEntry) readClass(className string) ([]byte, Entry, error) {
 	data, err := ioutil.ReadFile(fileName)
 	return data, dirEntry, err
 }
+
 /* ToString return the absolute path of the Entry */
 func (dirEntry *DirEntry) ToString() string {
 	return dirEntry.absolutePath
 }
+
 /* constructor for DirEntry */
 func NewDirEntry(path string) *DirEntry {
 	absPath, err := filepath.Abs(path)

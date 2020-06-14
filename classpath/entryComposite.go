@@ -21,6 +21,7 @@ func NewCompositeEntry(pathList string) CompositeEntry {
 	}
 	return compositeEntry
 }
+
 /* readClass traverse all the entries for the class, once found, return the value */
 func (compositeEntry CompositeEntry) readClass(className string) ([]byte, Entry, error) {
 	for _, entry := range compositeEntry {
@@ -31,6 +32,7 @@ func (compositeEntry CompositeEntry) readClass(className string) ([]byte, Entry,
 	}
 	return nil, nil, errors.New("Class Not Found: " + className)
 }
+
 /* ToString return the union of the absolute path of every entries joined with pathListSeparator */
 func (compositeEntry CompositeEntry) ToString() string {
 	strs := make([]string, len(compositeEntry))

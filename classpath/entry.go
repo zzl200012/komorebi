@@ -15,6 +15,7 @@ type Entry interface {
 	readClass(className string) ([]byte, Entry, error)
 	ToString() string
 }
+
 /* constructor for Entry */
 func newEntry(path string) Entry {
 	if strings.Contains(path, pathListSeparator) {

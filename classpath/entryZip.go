@@ -39,10 +39,12 @@ func (zipEntry *ZipEntry) readClass(className string) ([]byte, Entry, error) {
 	}
 	return nil, nil, errors.New("Class Not Found: " + className)
 }
+
 /* ToString return the absolute path of the Entry */
 func (zipEntry *ZipEntry) ToString() string {
 	return zipEntry.absolutePath
 }
+
 /* constructor for ZipEntry */
 func NewZipEntry(path string) *ZipEntry {
 	absPath, err := filepath.Abs(path)
