@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"komorebi/classfile"
 	"komorebi/classpath"
+	"komorebi/runtime"
 	"os"
-	"strings"
 )
 
 /**
@@ -49,13 +49,16 @@ func PrintUsage() {
 }
 
 func StartJVM(cmd *Cmd) {
-	cp := classpath.Parse(cmd.XjreOption, cmd.CpOption)
-	fmt.Printf("classpath:%s class:%s args:%v\n",
-		       cmd.CpOption, cmd.Class, cmd.Args)
-	className := strings.Replace(cmd.Class, ".", "/", -1)
-	cf := loadClass(className, cp)
-	fmt.Println(cmd.Class)
-	printClassInfo(cf)
+	//cp := classpath.Parse(cmd.XjreOption, cmd.CpOption)
+	//fmt.Printf("classpath:%s class:%s args:%v\n",
+	//	       cmd.CpOption, cmd.Class, cmd.Args)
+	//className := strings.Replace(cmd.Class, ".", "/", -1)
+	//cf := loadClass(className, cp)
+	//fmt.Println(cmd.Class)
+	//printClassInfo(cf)
+	frame := runtime.NewFrame(100, 100)
+	testLocalVars(frame.LocalVars())
+	testOperandStack(frame.OperandStack())
 }
 
 func loadClass(className string, cp *classpath.Classpath) *classfile.ClassFile {
@@ -85,4 +88,38 @@ func printClassInfo(cf *classfile.ClassFile) {
 	for _, m := range cf.Methods() {
 		fmt.Printf("  %s\n", m.Name())
 	}
+}
+
+func testLocalVars(vars runtime.LocalVars) {
+	vars.SetInt(0, 100)
+	vars.SetInt(1, -100)
+	vars.SetLong(2, 2997924580)
+	vars.SetLong(4, -2997924580)
+	vars.SetFloat(6, 3.1415926)
+	vars.SetDouble(7, 2.71828182845)
+	vars.SetRef(9, nil)
+	println(vars.GetInt(0))
+	println(vars.GetInt(1))
+	println(vars.GetLong(2))
+	println(vars.GetLong(4))
+	println(vars.GetFloat(6))
+	println(vars.GetDouble(7))
+	println(vars.GetRef(9))
+}
+
+func testOperandStack(ops *runtime.OperandStack) {
+	ops.PushInt(100)
+	ops.PushInt(-100)
+	ops.PushLong(2997924580)
+	ops.PushLong(-2997924580)
+	ops.PushFloat(3.1415926)
+	ops.PushDouble(2.71828182845)
+	ops.PushRef(nil)
+	println(ops.PopRef())
+	println(ops.PopDouble())
+	println(ops.PopFloat())
+	println(ops.PopLong())
+	println(ops.PopLong())
+	println(ops.PopInt())
+	println(ops.PopInt())
 }
