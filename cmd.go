@@ -7,6 +7,7 @@ import (
 	"komorebi/classpath"
 	"komorebi/runtime"
 	"os"
+	"strings"
 )
 
 /**
@@ -21,7 +22,7 @@ type Cmd struct {
 	CpOption    string
 	Class       string
 	Args        []string
-	XjreOption string
+	XjreOption  string
 }
 
 func ParseCmd() *Cmd {
@@ -49,16 +50,22 @@ func PrintUsage() {
 }
 
 func StartJVM(cmd *Cmd) {
-	//cp := classpath.Parse(cmd.XjreOption, cmd.CpOption)
+	cp := classpath.Parse(cmd.XjreOption, cmd.CpOption)
 	//fmt.Printf("classpath:%s class:%s args:%v\n",
 	//	       cmd.CpOption, cmd.Class, cmd.Args)
-	//className := strings.Replace(cmd.Class, ".", "/", -1)
-	//cf := loadClass(className, cp)
+	className := strings.Replace(cmd.Class, ".", "/", -1)
+	cf := loadClass(className, cp)
 	//fmt.Println(cmd.Class)
 	//printClassInfo(cf)
-	frame := runtime.NewFrame(100, 100)
-	testLocalVars(frame.LocalVars())
-	testOperandStack(frame.OperandStack())
+	//frame := runtime.NewFrame(100, 100)
+	//testLocalVars(frame.LocalVars())
+	//testOperandStack(frame.OperandStack())
+	mainMethod := getMainMethod(cf)
+	if mainMethod != nil {
+		interpret(mainMethod)
+	} else {
+		fmt.Printf("Main method not found in class %s\n", cmd.Class)
+	}
 }
 
 func loadClass(className string, cp *classpath.Classpath) *classfile.ClassFile {
@@ -122,4 +129,13 @@ func testOperandStack(ops *runtime.OperandStack) {
 	println(ops.PopLong())
 	println(ops.PopInt())
 	println(ops.PopInt())
+}
+
+func getMainMethod(cf *classfile.ClassFile) *classfile.MemberInfo {
+	for _, m := range cf.Methods() {
+		if m.Name() == "main" && m.Descriptor() == "([Ljava/lang/String;)V" {
+			return m
+		}
+	}
+	return nil
 }

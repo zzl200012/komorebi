@@ -29,6 +29,7 @@ type MemberInfo struct {
 	descriptorIndex uint16
 	attributes      []AttributeInfo
 }
+
 /* readMembers read the table of fields and methods */
 func readMembers(reader *ClassReader, pool ConstantPool) []*MemberInfo {
 	count := reader.readUint16()
@@ -38,6 +39,7 @@ func readMembers(reader *ClassReader, pool ConstantPool) []*MemberInfo {
 	}
 	return members
 }
+
 /* readMember read the data of field and method */
 func readMember(reader *ClassReader, pool ConstantPool) *MemberInfo {
 	return &MemberInfo{
@@ -48,15 +50,29 @@ func readMember(reader *ClassReader, pool ConstantPool) *MemberInfo {
 		attributes:      readAttributes(reader, pool),
 	}
 }
+
 /* getter for access flags */
 func (info *MemberInfo) AccessFlags() uint16 {
 	return info.accessFlags
 }
+
 /* Name seek for the name of field or method from constant pool */
 func (info *MemberInfo) Name() string {
 	return info.pool.getUtf8(info.nameIndex)
 }
+
 /* Descriptor seek for the descriptor of field or method from constant pool */
 func (info *MemberInfo) Descriptor() string {
 	return info.pool.getUtf8(info.descriptorIndex)
+}
+
+/* CodeAttribute seek for code attribute from attributes of member info */
+func (info *MemberInfo) CodeAttribute() *CodeAttribute {
+	for _, attrInfo := range info.attributes {
+		switch attrInfo.(type) {
+		case *CodeAttribute:
+			return attrInfo.(*CodeAttribute)
+		}
+	}
+	return nil
 }
