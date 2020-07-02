@@ -1,5 +1,7 @@
 package runtime
 
+import "komorebi/runtime/heap"
+
 /**
  * @Author: Zhou Zilong
  * @Date: 2020/6/14 16:27
@@ -40,6 +42,14 @@ func (thread *Thread) CurrentFrame() *Frame {
 	return thread.stack.top()
 }
 
-func (thread *Thread) NewFrame(maxLocals, maxStack uint) *Frame {
-	return newFrame(thread, maxLocals, maxStack)
+//func (thread *Thread) NewFrame(maxLocals, maxStack uint) *Frame {
+//	return newFrame(thread, maxLocals, maxStack)
+//}
+
+func (thread *Thread) NewFrame(method *heap.Method) *Frame {
+	return newFrame(thread, method)
+}
+
+func (thread *Thread) IsStackEmpty() bool {
+	return thread.stack.isEmpty()
 }

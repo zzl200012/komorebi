@@ -6,6 +6,7 @@ import (
 	"komorebi/classfile"
 	"komorebi/classpath"
 	"komorebi/runtime"
+	"komorebi/runtime/heap"
 	"os"
 	"strings"
 )
@@ -17,12 +18,14 @@ import (
 
 // java [-options] class [args...]
 type Cmd struct {
-	HelpFlag    bool
-	VersionFlag bool
-	CpOption    string
-	Class       string
-	Args        []string
-	XjreOption  string
+	HelpFlag         bool
+	VersionFlag      bool
+	verboseClassFlag bool
+	verboseInstFlag  bool
+	CpOption         string
+	Class            string
+	Args             []string
+	XjreOption       string
 }
 
 func ParseCmd() *Cmd {
@@ -31,6 +34,9 @@ func ParseCmd() *Cmd {
 	flag.Usage = PrintUsage
 	flag.BoolVar(&cmd.HelpFlag, "help", false, "print help message")
 	flag.BoolVar(&cmd.VersionFlag, "version", false, "print version and exit")
+	flag.BoolVar(&cmd.verboseClassFlag, "verbose", false, "enable verbose output")
+	flag.BoolVar(&cmd.verboseClassFlag, "verbose:class", false, "enable verbose output")
+	flag.BoolVar(&cmd.verboseInstFlag, "verbose:inst", false, "enable verbose output")
 	flag.StringVar(&cmd.CpOption, "classpath", "", "classpath")
 	flag.StringVar(&cmd.CpOption, "cp", "", "classpath")
 	flag.StringVar(&cmd.XjreOption, "Xjre", "", "path to jre")
@@ -49,20 +55,36 @@ func PrintUsage() {
 	//flag.PrintDefaults()
 }
 
-func StartJVM(cmd *Cmd) {
+//func StartJVM(cmd *Cmd) {
+//	cp := classpath.Parse(cmd.XjreOption, cmd.CpOption)
+//	//fmt.Printf("classpath:%s class:%s args:%v\n",
+//	//	       cmd.CpOption, cmd.Class, cmd.Args)
+//	classLoader := heap.NewClassLoader(cp)
+//	className := strings.Replace(cmd.Class, ".", "/", -1)
+//	mainClass := classLoader.LoadClass(className)
+//	//cf := loadClass(className, cp)
+//	//fmt.Println(cmd.Class)
+//	//printClassInfo(cf)
+//	//frame := runtime.NewFrame(100, 100)
+//	//testLocalVars(frame.LocalVars())
+//	//testOperandStack(frame.OperandStack())
+//	mainMethod := mainClass.GetMainMethod()
+//	if mainMethod != nil {
+//		interpret(mainMethod)
+//	} else {
+//		fmt.Printf("Main method not found in class %s\n", cmd.Class)
+//	}
+//}
+
+func startJVM(cmd *Cmd) {
 	cp := classpath.Parse(cmd.XjreOption, cmd.CpOption)
-	//fmt.Printf("classpath:%s class:%s args:%v\n",
-	//	       cmd.CpOption, cmd.Class, cmd.Args)
+	classLoader := heap.NewClassLoader(cp, cmd.verboseClassFlag)
+
 	className := strings.Replace(cmd.Class, ".", "/", -1)
-	cf := loadClass(className, cp)
-	//fmt.Println(cmd.Class)
-	//printClassInfo(cf)
-	//frame := runtime.NewFrame(100, 100)
-	//testLocalVars(frame.LocalVars())
-	//testOperandStack(frame.OperandStack())
-	mainMethod := getMainMethod(cf)
+	mainClass := classLoader.LoadClass(className)
+	mainMethod := mainClass.GetMainMethod()
 	if mainMethod != nil {
-		interpret(mainMethod)
+		interpret(mainMethod, cmd.verboseInstFlag)
 	} else {
 		fmt.Printf("Main method not found in class %s\n", cmd.Class)
 	}

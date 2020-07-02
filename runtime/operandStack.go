@@ -1,6 +1,9 @@
 package runtime
 
-import "math"
+import (
+	"komorebi/runtime/heap"
+	"math"
+)
 
 /**
  * @Author: Zhou Zilong
@@ -8,7 +11,7 @@ import "math"
  */
 
 type OperandStack struct {
-	size uint
+	size  uint
 	slots []Slot
 }
 
@@ -64,11 +67,11 @@ func (operandStack *OperandStack) PopDouble() float64 {
 	return math.Float64frombits(bits)
 }
 
-func (operandStack *OperandStack) PushRef(ref *Object) {
+func (operandStack *OperandStack) PushRef(ref *heap.Object) {
 	operandStack.slots[operandStack.size].ref = ref
 	operandStack.size++
 }
-func (operandStack *OperandStack) PopRef() *Object {
+func (operandStack *OperandStack) PopRef() *heap.Object {
 	operandStack.size--
 	ref := operandStack.slots[operandStack.size].ref
 	operandStack.slots[operandStack.size].ref = nil
@@ -82,4 +85,3 @@ func (operandStack *OperandStack) PopSlot() Slot {
 	operandStack.size--
 	return operandStack.slots[operandStack.size]
 }
-

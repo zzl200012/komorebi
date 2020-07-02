@@ -1,6 +1,9 @@
 package runtime
 
-import "math"
+import (
+	"komorebi/runtime/heap"
+	"math"
+)
 
 /**
  * @Author: Zhou Zilong
@@ -53,9 +56,9 @@ func (localVars LocalVars) GetDouble(index uint) float64 {
 	return math.Float64frombits(bits)
 }
 
-func (localVars LocalVars) SetRef(index uint, ref *Object) {
+func (localVars LocalVars) SetRef(index uint, ref *heap.Object) {
 	localVars[index].ref = ref
 }
-func (localVars LocalVars) GetRef(index uint) *Object {
+func (localVars LocalVars) GetRef(index uint) *heap.Object {
 	return localVars[index].ref
 }

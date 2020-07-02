@@ -5,7 +5,6 @@ package runtime
  * @Date: 2020/6/14 16:29
  */
 
-
 type Stack struct {
 	maxSize uint
 	size    uint
@@ -50,4 +49,8 @@ func (stack *Stack) top() *Frame {
 	}
 
 	return stack._top
+}
+
+func (stack *Stack) IsEmpty() bool {
+	return stack.size == 0
 }
